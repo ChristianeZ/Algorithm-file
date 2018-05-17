@@ -1,0 +1,100 @@
+class hashtable:
+  def __init__(self,table_size =12):
+    self.size = table_size
+    self.slots = [None] * table_size
+    self.data = [None]* table_size
+  def put(self,key,data):
+    hashvalue = self.hashfunction_num(key) #you can change this hashfunction based on the characterstic of the key, depends on you. 
+
+    if self.slots[hashvalue] == None:
+      self.slots[hashvalue] = key
+      self.data[hashvalue] = data
+    else:
+      val = hashvalue
+      nextslot = self.linear_prob(val)
+      while self.slots[nextslot] != None and self.slots[nextslot] != key:
+        val +=1
+        nextslot = self.linear_prob(val) # you can change this to quadratic_pro or double, times = val
+
+      if self.slots[nextslot] == None:
+        self.slots[nextslot] = key
+        self.data[nextslot] = data
+      else:
+        self.data[nextslot] = data
+  """
+  If you change the problem solving function, you need to change both "nextslot=" and be aware that each function has differen input value.
+  e.g.
+  nextslot = self.linear_prob(val)
+  nextslot = self.quadratic_prob(val,times) <- times =0 before while loop and times +=1 in while loop
+  nextslot = self.double_hashing(key,old_index,times) <- times is same as above in quadratic probing. Remmeber the key value is needed as an input for hashfunction2
+  
+  """
+
+  def hashfunction_num(self,value):
+    return value%self.size
+  def hashfunction_alpha(self,string):
+    sum_of_acci = 0
+    for i in string:
+      sum_of_acci += ord(i)
+    return sum_of_acci%self.size
+  def hashfunction_alphawithweighting(self,string):
+    sum_1 = 0
+    index = 1
+    for i in string:
+      sum_1 += ord(i) * index
+      index +=1
+    return sum_1%self.size
+  """
+  Alpha with weighting is each alphabet in the string weight ord(alphabet)*its position(first,second,third..).
+  E.g. for "cat", its sum = ord(c)*1 + ord(a)*2 + ord(t)*3
+  which given us the formula sum_1 += ord(alphabet) * order
+  """
+  def linear_prob(self,old_index):
+    return (old_index+1)%self.size
+
+  def quadratic_prob(self,old_index,times): 
+    return (old_index + times**2)%self.size
+    """
+    If you want to swap the current code from linear to quadratic, here is how you change things.
+    You dont need val = hashvalue anymore, because we need to keep the hashvalue each time as we loop through and add quadratic value in it.
+    e.g. round 1 = (hashvalue + 1**2)%self.size
+         round 2 = (hashvalue + 2**2)%self.size
+    but we need a new variable, maybe called times, and in while loop it should be times +=1 for each loop, if you carefully look at the above examples I gave.
+    Here is what the main code look like in the self.put() function.
+    ---------------
+    
+    if self.slots[hashvalue] == None:
+      self.slots[hashvalue] = key
+ 
+    else:
+      val = hashvalue
+      times = 1
+      nextslot = self.quadratic_prob(val,times)
+      
+      while self.slots[nextslot] != None:
+        times +=1
+        nextslot = self.quadratic_prob(val,times) # you can change this to quadratic_pro or double, times = val
+    ----------------
+    """
+  def double_hashing(self,key,old_index,times):
+    step_val = self.size-(key%self.size)
+    return (old_index + step_val*times)%self.size
+  """
+  Similar to Quadratic function, if you want to shift from linear to double_hashing, we need to keep the hashvalue the same each time.
+  We figure out the adding value from the given second function, in here is size-(hashvalue%size).
+  In each round we adding the adding value into the hashvalue, therefore we need a variable "times"
+  So it will look like: (hashvalue + times*adding value)%size. Or you can call the variable round, if you wish.
+
+  A key thing need to be aware is that:
+  hash2function = self.size - (key%self.size) here is keyvalue not the hashvalue. Hashvalue is key%self.size
+  Think like the original hashfunction hashvalue = key%self.size doesnt exist, and you need to figure out a new hashvalue by using the hash2function.
+  After you figure out the hash2function, you add up this hash2value each time to the hashvalue you gather from the first function, like explained above. 
+  """
+  def __str__(self):
+    return str(self.slots)
+  """
+  You need this, otherwise you will print out code when you try to print the item in the function.
+  """
+#h = Hashtable()
+#h.put(key,data)
+

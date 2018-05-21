@@ -1,0 +1,108 @@
+class BinaryTree:
+    def __init__(self,data):
+        self.data = data
+        self.left = None
+        self.right = None
+    def insert_left(self,new_data):
+        if self.left == None:
+            self.left = BinaryTree(new_data)
+        else:
+            t = BinaryTree(new_data)
+            t.left = self.left
+            self.left = t
+    def insert_right(self,new_data):
+        if self.right == None:
+            self.right = BinaryTree(new_data)
+        else:
+            t = BinaryTree(new_data)
+            t.right = self.right
+            self.right = t
+    def get_left(self):
+        return self.left
+    def get_right(self):
+        return self.right
+    def set_data(self,data):
+        self.data = data
+    def get_data(self):
+        return self.data
+
+    #import BinaryTree (if your class is not in the same document)
+    #Issue start with this line. 
+def basic_print(a):
+    if a != None:
+        basic_print(a.get_left())
+        print(a.get_data(),end = "")
+        basic_print(a.get_right())
+        
+def convert_tree_to_list(a):
+    if a == None:
+        return None
+    else:
+        result = []
+        result.append(str(a.get_data()))
+        result.append(convert_tree_to_list(a.get_left()))
+        result.append(convert_tree_to_list(a.get_right()))
+        return result
+        """
+        This function is not included in the Tree class, here used a recursion function
+        it first append the left side of the node and then the second hand side. A box trace can be
+        help better understand. It first loop through the left hand side til the leaf, and then track back. 
+
+        """
+        
+
+def print_tree(a,level):
+    print(" "*(level*4) + str(a.get_data()))
+    if a.get_left() != None:
+        print("(left)", end = "")
+        print_tree(a.get_left(),level +1)
+    if a.get_right() != None:
+        print("(right)", end = "")
+        print_tree(a.get_right(), level +1)
+
+def get_sum(a):
+    if a == None:
+        return 0
+    else:
+        sum_left = get_sum(a.get_left())
+        sum_right = get_sum(a.get_right())
+        return a.get_data() + sum_left + sum_right
+    """A recursion is used"""
+    
+def get_count(a):
+    if a == None:
+        return 0
+    else:
+        return 1 + get_count(a.get_left()) + get_count(a.get_right())
+    
+def maxdepth(a):
+    if a == None:
+        return 0
+    else:
+        return max(maxdepth(a.get_left()),maxdepth(a.get_right())) + 1
+
+def get_max(a):
+    if a == None:
+        return 0
+    else:
+        return max(a.get_data(),get_max(a.get_left()),get_max(a.get_right()))
+        
+def main():
+	a = BinaryTree(10)
+	
+	a.insert_left(5)
+	a.insert_right(15)
+	a.insert_right(999)
+	
+	x = a.get_left()
+	x.insert_left(2)
+	x.insert_right(7)
+
+	basic_print(a)
+	print()
+	print(convert_tree_to_list(a))
+	print_tree(a, 0)
+	print(get_max(a))
+	
+
+main()
